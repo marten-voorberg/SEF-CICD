@@ -9,9 +9,8 @@ import se.kth.github.DummyAPIClient;
 import se.kth.github.GithubApiClient;
 import se.kth.pipelines.CommitMessageChecker;
 import se.kth.pipelines.TestChecker;
+import se.kth.wrappers.JSONPushWrapper;
 import se.kth.wrappers.PushWrapper;
-
-import java.io.IOException;
 
 
 public class ContinuousIntegrationServer extends AbstractHandler {
@@ -26,7 +25,6 @@ public class ContinuousIntegrationServer extends AbstractHandler {
         this.testChecker = new TestChecker(this.githubApiClient);
     }
 
-    // used to start the CI server in command line
     public static void main(String[] args) throws Exception {
         System.out.println("Starting server!");
 
@@ -37,12 +35,11 @@ public class ContinuousIntegrationServer extends AbstractHandler {
     }
 
     @Override
-    public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response)
-            throws IOException {
+    public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) {
         System.out.printf("Received request to target '%s'\n", target);
 
         try {
-            PushWrapper pushWrapper = new PushWrapper(request);
+            PushWrapper pushWrapper = new JSONPushWrapper(request);
 
             if (target.contains("commit-message")) {
                 pushWrapper.getCommitWrappers().forEach(commitMessageChecker::handleCommit);
@@ -54,7 +51,6 @@ public class ContinuousIntegrationServer extends AbstractHandler {
                 return;
             }
 
-
             response.setContentType("text/html;charset=utf-8");
             response.setStatus(HttpServletResponse.SC_OK);
             response.getWriter().println("CI job done");
@@ -62,23 +58,5 @@ public class ContinuousIntegrationServer extends AbstractHandler {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             e.printStackTrace();
         }
-
-//        response.setContentType("text/html;charset=utf-8");
-//        response.setStatus(HttpServletResponse.SC_OK);
-//        baseRequest.setHandled(true);
-//
-//        BufferedReader reader = request.getReader();
-//        String jsonString = reader.lines().collect(Collectors.joining());
-//
-//
-//        ObjectMapper mapper = new ObjectMapper();
-//        Map<String, Object> map = mapper.readValue(jsonString, Map.class);
-//
-//        ArrayList commits = (ArrayList) map.get("commits");
-//
-//        Map<String, Object> commit = (Map<String, Object>) commits.get(0);
-//        System.out.println(commit.get("message"));
-
-
     }
 }
