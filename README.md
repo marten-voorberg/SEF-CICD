@@ -1,4 +1,11 @@
 # DD2480 Assignment 2
+## Contributions
+### Karlis: 
+### Marten:
+### David: 
+### Chenyi:
+### Nils: 
+
 
 ## Git Conventions
 - All commit messages take the following structure:
