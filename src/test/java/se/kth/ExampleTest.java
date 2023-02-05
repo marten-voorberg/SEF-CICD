@@ -13,6 +13,6 @@ public class ExampleTest {
 
     @Test
     public void testThatFails() {
-        assertTrue(true);
+        assertTrue(false);
     }
 }
