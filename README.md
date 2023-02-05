@@ -1,5 +1,9 @@
 # DD2480 Assignment 2
 
+
+## Project Description
+This is a small CI server dedicated for Github. The server supports the building and testing of Gradle projects.
+
 ## Git Conventions
 - All commit messages take the following structure:
 `<commit type> #<issue-number>: <description>`
