@@ -1,62 +1,114 @@
 package se.kth.pipelines;
 
+import se.kth.github.DummyAPIClient;
 import se.kth.github.GithubApiClient;
+import se.kth.github.StatusState;
 import se.kth.wrappers.CommitWrapper;
+import se.kth.wrappers.DummyCommitWrapper;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
 public class TestChecker extends PipelineHandler {
+    private final static String CONTEXT_STRING = "GROUP4_TEST_CHECKER";
+
     public TestChecker(GithubApiClient apiClient) {
         super(apiClient);
     }
 
     @Override
     public void handleCommit(CommitWrapper commitWrapper) {
-        throw new UnsupportedOperationException();
-    }
+        final String commitSHA = commitWrapper.getCommitSHA();
 
-    public static void main(String[] args) {
-        Runtime runtime = Runtime.getRuntime();
+        this.apiClient.createOrUpdateCommitStatus(
+                commitSHA,
+                StatusState.PENDING,
+                null,
+                "Gradle test pipelane has been started...",
+                CONTEXT_STRING
+        );
+
+        final Runtime runtime = Runtime.getRuntime();
+        Process p;
+        int exitValue;
 
         try {
-            Process p;
-            int exitValue;
+            // Clone the repository
+            p = runtime.exec(getCloneCommand());
+            exitValue = p.waitFor();
+            if (exitValue != 0) {
+                this.apiClient.createOrUpdateCommitStatus(
+                        commitSHA,
+                        StatusState.ERROR,
+                        null,
+                        "Repository could not be cloned!",
+                        CONTEXT_STRING
+                );
+                return;
+            }
 
-//            p = runtime.exec(getCloneCommand());
-//            exitValue = p.waitFor();
-//            System.out.printf("git clone: %d\n", exitValue);
-//
-//            p = runtime.exec(getCDCommand("SEF-CICD"));
-//            exitValue = p.waitFor();
-//            System.out.printf("cd: %d\n", exitValue);
-
-//            p = runtime.exec(toCommandArray("cd SEF-CICD; pwd"));
-//            new BufferedReader(new InputStreamReader(p.getInputStream())).lines().forEach(System.out::println);
-//            exitValue = p.waitFor();
-//            System.out.printf("pwd exit value: %d\n", exitValue);
-
-//            p = runtime.exec(getCheckoutCommitCommand("41c9300e7f15cdb56b04f926b1d6c1bcd7dae8d7"));
-//            exitValue = p.waitFor();
-//            System.out.printf("git checkout: %d\n", exitValue);
+            // Checkout the right commit
+            p = runtime.exec(getCheckoutCommitCommand(commitSHA));
+            exitValue = p.waitFor();
+            if (exitValue != 0) {
+                this.apiClient.createOrUpdateCommitStatus(
+                        commitSHA,
+                        StatusState.ERROR,
+                        null,
+                        String.format("Commit '%s' could not be checked out!", commitSHA),
+                        CONTEXT_STRING
+                );
+                return;
+            }
 
             p = runtime.exec(getGradleCommand());
             exitValue = p.waitFor();
-            System.out.printf("gradle test: %d\n", exitValue);
-            new BufferedReader(new InputStreamReader(p.getInputStream())).lines().forEach(System.out::print);
+            if (exitValue == 0) {
+                this.apiClient.createOrUpdateCommitStatus(
+                        commitSHA,
+                        StatusState.SUCCESS,
+                        null,
+                        "Gradle test succeeded!",
+                        CONTEXT_STRING
+                );
+            } else {
+                this.apiClient.createOrUpdateCommitStatus(
+                        commitSHA,
+                        StatusState.FAILURE,
+                        null,
+                        "Gradle test failed!",
+                        CONTEXT_STRING
+                );
+            }
 
-//            p = runtime.exec(getCDCommand(".."));
-//            exitValue = p.waitFor();
-//            System.out.printf("cd: %d\n", exitValue);
-//
-//            p = runtime.exec(getCleanupCommand());
-//            exitValue = p.waitFor();
-//            System.out.printf("rm: %d\n", exitValue);
         } catch (IOException | InterruptedException e) {
+            this.apiClient.createOrUpdateCommitStatus(
+                    commitSHA,
+                    StatusState.ERROR,
+                    null,
+                    "An internal error was encountered whilst running the pipeline!",
+                    CONTEXT_STRING
+            );
             e.printStackTrace();
-            throw new RuntimeException(e);
+        } finally {
+            try {
+                p = runtime.exec(getCleanupCommand());
+                p.waitFor();
+            } catch (IOException | InterruptedException e) {
+                e.printStackTrace();
+                System.err.println("Could not clean up the cloned repository in TestChecker. " +
+                        "There might be a lingering folder!");
+            }
         }
+
+    }
+
+    public static void main(String[] args) {
+        TestChecker testChecker = new TestChecker(new DummyAPIClient());
+        CommitWrapper commitWrapper = new DummyCommitWrapper("6c369c1af19c54af4485d475debefc1bd69da740", "whatever");
+
+        testChecker.handleCommit(commitWrapper);
     }
 
     private static String[] getCloneCommand() {
@@ -68,6 +120,7 @@ public class TestChecker extends PipelineHandler {
     }
 
     private static String[] getGradleCommand() {
+        // Todo: make the gradle path non-fixed
         return toCommandArray("cd SEF-CICD; /opt/gradle/gradle-7.6/bin/gradle test");
     }
 
@@ -75,7 +128,7 @@ public class TestChecker extends PipelineHandler {
         return toCommandArray("rm -rf SEF-CICD");
     }
 
-    private static String[] getCDCommand(String dir){
+    private static String[] getCDCommand(String dir) {
         return toCommandArray(String.format("cd %s", dir));
     }
 
