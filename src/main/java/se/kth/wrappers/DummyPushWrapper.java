@@ -1,6 +1,7 @@
 package se.kth.wrappers;
 
 import java.util.List;
+import java.util.Map;
 
 public class DummyPushWrapper implements PushWrapper {
     private final List<CommitWrapper> commitWrappers;
@@ -14,4 +15,11 @@ public class DummyPushWrapper implements PushWrapper {
     public List<CommitWrapper> getCommitWrappers() {
         return commitWrappers;
     }
+
+    @Override
+    public Map<String, Object> getPushMap() {
+        return null;
+    }
+
+
 }
