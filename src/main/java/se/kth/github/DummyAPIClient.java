@@ -6,6 +6,6 @@ public class DummyAPIClient implements GithubApiClient {
         System.out.println("Received dummy request:");
         System.out.printf("\tsha: '%s'\n", commitSHA);
         System.out.printf("\tstate: '%s'\n", state);
-        System.out.printf("\tdescription: '%s'", description);
+        System.out.printf("\tdescription: '%s\n'", description);
     }
 }
