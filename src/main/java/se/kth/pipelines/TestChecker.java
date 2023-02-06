@@ -6,9 +6,10 @@ import se.kth.github.StatusState;
 import se.kth.wrappers.CommitWrapper;
 import se.kth.wrappers.DummyCommitWrapper;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.stream.Collectors;
 
 public class TestChecker extends PipelineHandler {
     private final static String CONTEXT_STRING = "GROUP4_TEST_CHECKER";
@@ -63,6 +64,8 @@ public class TestChecker extends PipelineHandler {
             }
 
             p = runtime.exec(getGradleCommand());
+            String gradleOutput = new BufferedReader(new InputStreamReader(p.getInputStream())).lines().collect(Collectors.joining("\n"));
+            this.writeToFile(commitSHA, gradleOutput);
             exitValue = p.waitFor();
             if (exitValue == 0) {
                 this.apiClient.createOrUpdateCommitStatus(
@@ -104,6 +107,17 @@ public class TestChecker extends PipelineHandler {
 
     }
 
+    private void writeToFile(String commitSHA, String gradleOutput) {
+        try {
+            Path path = Path.of(String.format("history/tests/commit-%s", commitSHA));
+            Files.createFile(path);
+            Files.writeString(path, gradleOutput);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
     public static void main(String[] args) {
         TestChecker testChecker = new TestChecker(new DummyAPIClient());
         CommitWrapper commitWrapper = new DummyCommitWrapper("6c369c1af19c54af4485d475debefc1bd69da740", "whatever");
@@ -121,7 +135,7 @@ public class TestChecker extends PipelineHandler {
 
     private static String[] getGradleCommand() {
         // Todo: make the gradle path non-fixed
-        return toCommandArray("cd SEF-CICD; /opt/gradle/gradle-7.6/bin/gradle test");
+        return toCommandArray("cd SEF-CICD; /opt/gradle/gradle-7.6/bin/gradle -i test");
     }
 
     private static String[] getCleanupCommand() {
