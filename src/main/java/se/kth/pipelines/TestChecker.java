@@ -110,6 +110,7 @@ public class TestChecker extends PipelineHandler {
     private void writeToFile(String commitSHA, String gradleOutput) {
         try {
             Path path = Path.of(String.format("history/tests/commit-%s", commitSHA));
+            Files.deleteIfExists(path);
             Files.createFile(path);
             Files.writeString(path, gradleOutput);
         } catch (IOException e) {
