@@ -12,9 +12,11 @@ import se.kth.pipelines.TestChecker;
 import se.kth.wrappers.JSONPushWrapper;
 import se.kth.wrappers.PushWrapper;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -60,15 +62,27 @@ public class ContinuousIntegrationServer extends AbstractHandler {
                 response.setContentType("text/plain;charset=utf-8");
                 response.setStatus(HttpServletResponse.SC_OK);
                 response.getWriter().println("test CI Job done");
-            } else if (target.contains("commit/")) {
-                String commitId = target.split("commit/")[1];
-                if (commitId.charAt(commitId.length() - 1) == '/') {
-                    commitId = commitId.substring(0, commitId.length() - 1);
+            } else if (target.contains("commits/")) {
+                String[] URI = target.split("commits/");
+
+                if (URI.length == 1){
+                    response.setContentType("text/html;charset=utf-8");
+                    response.getWriter().write(getTestSummaryFromFolder());
+                    response.getWriter().flush();
+                    response.setStatus(HttpServletResponse.SC_OK);
                 }
-                response.setContentType("text/html;charset=utf-8");
-                response.getWriter().write(getTestSummaryFromFile(commitId));
-                response.getWriter().flush();
-                response.setStatus(HttpServletResponse.SC_OK);
+                else {
+                    String commitId = URI[1];
+                
+                    if (commitId.charAt(commitId.length() - 1) == '/') {
+                        commitId = commitId.substring(0, commitId.length() - 1);
+                    }
+                    response.setContentType("text/html;charset=utf-8");
+                    response.getWriter().write(getTestSummaryFromFile(commitId));
+                    response.getWriter().flush();
+                    response.setStatus(HttpServletResponse.SC_OK);
+                }
+               
             } else {
                 response.setStatus(HttpServletResponse.SC_NOT_FOUND);
                 System.out.printf("Received invalid target '%s'\n", target);
@@ -83,6 +97,31 @@ public class ContinuousIntegrationServer extends AbstractHandler {
         try (Stream<String> linesStream = Files.lines(Path.of(String.format("history/tests/commit-%s", commitId)))) {
             return "<div style='font-family: monospace'>" + linesStream.collect(Collectors.joining("<br>")) + "</div>";
         } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private String getTestSummaryFromFolder() {
+        try {
+            Set<String> commits = Stream.of(new File("history/tests").listFiles())
+            .filter(file -> !file.isDirectory())
+            .map(File::getName)
+            .collect(Collectors.toSet());
+
+            String commitList = "<div style='font-family: monospace'>";
+
+            for (String commit : commits){
+                String commitId = commit.split("commit-")[1];
+                
+                commitList += "<a href='localhost:8080/commits/" + commitId + "' target='_self'>" + commit + "</a> <br>";
+            }
+
+            
+
+            commitList += "</div>";
+
+            return commitList;
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
