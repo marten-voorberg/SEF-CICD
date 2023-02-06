@@ -17,4 +17,4 @@
 
 ## History
 History of previous commits (recorded when the software was running) can be found at
-[localhost:8080/commits/](localhost:8080/commits/) (localhost).
+[localhost:8080/commits/](http://localhost:8080/commits/) (localhost).

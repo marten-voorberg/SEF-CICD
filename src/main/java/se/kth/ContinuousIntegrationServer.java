@@ -113,10 +113,8 @@ public class ContinuousIntegrationServer extends AbstractHandler {
             for (String commit : commits){
                 String commitId = commit.split("commit-")[1];
                 
-                commitList += "<a href='localhost:8080/commits/" + commitId + "' target='_self'>" + commit + "</a> <br>";
+                commitList += "<a  target= '_self' href='http://localhost:8080/commits/" + commitId + "'>" + commit + "</a> <br>";
             }
-
-            
 
             commitList += "</div>";
 
