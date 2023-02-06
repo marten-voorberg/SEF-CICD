@@ -10,6 +10,9 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.stream.Collectors;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 public class TestChecker extends PipelineHandler {
     private final static String CONTEXT_STRING = "GROUP4_TEST_CHECKER";
@@ -118,6 +121,7 @@ public class TestChecker extends PipelineHandler {
         }
 
     }
+
 
     public static void main(String[] args) {
         TestChecker testChecker = new TestChecker(new DummyAPIClient());
