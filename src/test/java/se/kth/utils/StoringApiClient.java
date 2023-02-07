@@ -1,8 +1,10 @@
 package se.kth.utils;
 
+import org.apache.http.client.methods.CloseableHttpResponse;
 import se.kth.github.GithubApiClient;
 import se.kth.github.StatusState;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,6 +21,11 @@ public class StoringApiClient implements GithubApiClient {
     @Override
     public void createOrUpdateCommitStatus(String commitSHA, StatusState state, String targetUrl, String description, String context) {
         this.storedCalls.add(new APICall(commitSHA, state, targetUrl, description, context));
+    }
+
+    @Override
+    public CloseableHttpResponse postStatus(StatusState state) throws IOException {
+        return null;
     }
 
     public List<APICall> getStoredCalls() {
