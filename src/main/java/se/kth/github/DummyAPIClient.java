@@ -17,6 +17,4 @@ public class DummyAPIClient implements GithubApiClient {
     public CloseableHttpResponse postStatus(StatusState state) throws IOException {
         return null;
     }
-
-
 }

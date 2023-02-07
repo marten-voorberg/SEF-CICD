@@ -7,13 +7,9 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 
-import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-
-import java.util.Properties;
-
 
 public class CommitStatus implements GithubApiClient {
 
@@ -21,7 +17,7 @@ public class CommitStatus implements GithubApiClient {
     private final String repo;
     private final String sha;
     private final String url;
-    private String token;
+    private final String token;
 
 
     /**
@@ -57,14 +53,6 @@ public class CommitStatus implements GithubApiClient {
     @Override
     public CloseableHttpResponse postStatus(StatusState state) throws IOException {
 
-        try (FileReader reader = new FileReader("src\\main\\java\\se\\kth\\secrets\\github-token")) {
-            Properties properties = new Properties();
-            properties.load(reader);
-            token = properties.getProperty("token");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
         JsonObject jo = new JsonObject(); // create json object
 
         switch (state) { //add the appropriate state as a property
@@ -82,9 +70,7 @@ public class CommitStatus implements GithubApiClient {
 
             hp.addHeader("Accept", "application/vnd.github+json");
             hp.addHeader("Authorization", "Bearer " + token);
-
             hp.addHeader("X-GitHub-Api-Version","2022-11-28");
-
 
             StringEntity se = new StringEntity(jo.toString());
 

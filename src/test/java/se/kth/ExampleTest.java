@@ -22,7 +22,7 @@ public class ExampleTest {
     // @Test
     public void testGithubClient() throws IOException {
         var commitStatus = new CommitStatus("marten-voorberg", "SEF-CICD", "ff389bebac839116391c797f097e7d79e2c1837f");
-        var res = commitStatus.postStatus(StatusState.ERROR);
+        var res = commitStatus.postStatus(StatusState.SUCCESS);
         assertNotNull(res);
         assertTrue(true);
     }
