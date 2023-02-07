@@ -21,6 +21,13 @@ public class EmailClient {
         }
     }
 
+    /**
+     * This Function send an CI Result email to the committer using a gmail account
+     * The password of this email account should be saved in a plain text file locate at "secrets/email_password"
+     * @param receiver the email address of the receiver
+     * @param state the build status state Code
+     * @param description Detailed description about the build
+     */
     public void sendResultEmail(String receiver, StatusState state, String description){
         // Sender's email ID
         String from = "sefcicd.group4@gmail.com";
