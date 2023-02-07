@@ -16,10 +16,4 @@ public class DummyPushWrapper implements PushWrapper {
         return commitWrappers;
     }
 
-    @Override
-    public Map<String, Object> getPushMap() {
-        return null;
-    }
-
-
 }

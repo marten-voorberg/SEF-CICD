@@ -5,5 +5,4 @@ import java.util.Map;
 
 public interface PushWrapper {
     List<CommitWrapper> getCommitWrappers();
-    Map<String, Object> getPushMap();
 }

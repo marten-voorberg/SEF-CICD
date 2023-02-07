@@ -42,7 +42,6 @@ public class JSONPushWrapper implements PushWrapper {
     /**
      * @return the map of the push object from the GitHub API
      */
-    @Override
     public Map<String, Object> getPushMap() {
         return this.pushMap;
     }
