@@ -67,7 +67,7 @@ public class ContinuousIntegrationServer extends AbstractHandler {
 
                 if (URI.length == 1){
                     response.setContentType("text/html;charset=utf-8");
-                    response.getWriter().write(getTestSummaryFromFolder());
+                    response.getWriter().write(getCommitList());
                     response.getWriter().flush();
                     response.setStatus(HttpServletResponse.SC_OK);
                 }
@@ -78,7 +78,7 @@ public class ContinuousIntegrationServer extends AbstractHandler {
                         commitId = commitId.substring(0, commitId.length() - 1);
                     }
                     response.setContentType("text/html;charset=utf-8");
-                    response.getWriter().write(getTestSummaryFromFile(commitId));
+                    response.getWriter().write(getCommitFromId(commitId));
                     response.getWriter().flush();
                     response.setStatus(HttpServletResponse.SC_OK);
                 }
@@ -93,30 +93,26 @@ public class ContinuousIntegrationServer extends AbstractHandler {
         }
     }
 
-    private String getTestSummaryFromFile(String commitId) {
-        try (Stream<String> linesStream = Files.lines(Path.of(String.format("history/tests/commit-%s", commitId)))) {
-            return "<div style='font-family: monospace'>" + linesStream.collect(Collectors.joining("<br>")) + "</div>";
+    private String getCommitFromId(String commitId) {
+        try (Stream<String> linesStream = Files.lines(Path.of(String.format("history/tests/%s", commitId)))) {
+            return "<div style='font-family: monospace'>" + linesStream.collect(Collectors.joining("")) + "</div>";
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private String getTestSummaryFromFolder() {
+    private String getCommitList() {
         try {
             Set<String> commits = Stream.of(new File("history/tests").listFiles())
-            .filter(file -> !file.isDirectory())
             .map(File::getName)
             .collect(Collectors.toSet());
 
-            String commitList = "<div style='font-family: monospace'>";
+            String commitList = "<table ><tr><th>Commits</th></tr>";
 
             for (String commit : commits){
-                String commitId = commit.split("commit-")[1];
-                
-                commitList += "<a  target= '_self' href='http://localhost:8080/commits/" + commitId + "'>" + commit + "</a> <br>";
+                commitList += "<tr><td><a  target= '_self' href='http://localhost:8080/commits/" + commit + "'>" + commit + "</a> </td></tr>";
             }
-
-            commitList += "</div>";
+            commitList += "</table>";
 
             return commitList;
         } catch (Exception e) {

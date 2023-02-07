@@ -18,4 +18,14 @@ public class DummyCommitWrapper implements CommitWrapper {
     public String getCommitMessage() {
         return commitMessage;
     }
+
+    @Override
+    public String getCommitDate(){
+        return "2302011200";
+    }
+
+    @Override
+    public String getCommitAuthor(){
+        return "Nils Löfberg";
+    }
 }
