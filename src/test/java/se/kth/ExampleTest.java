@@ -11,9 +11,4 @@ public class ExampleTest {
     public void testTrivialThing() {
         assertEquals(5, 3 + 2);
     }
-
-    @Test
-    public void testThatFails() {
-        assertTrue(false);
-    }
 }

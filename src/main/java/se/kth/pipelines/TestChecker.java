@@ -136,16 +136,27 @@ public class TestChecker extends PipelineHandler {
 
     private void writeToFile(String commitSHA, String gradleOutput) {
         try {
+            Files.createDirectories(Path.of("history/tests"));
+//            Path historyPath = Path.of("history");
+//            if (!Files.exists(historyPath)) {
+//                Files.createDirectory(historyPath);
+//            }
+//
+//            Path testsPath = Path.of("history/tests");
+//            if (!Files.exists(testsPath)) {
+//                Files.createDirectory(testsPath);
+//            }
+
             Path path = Path.of(String.format("history/tests/commit-%s", commitSHA));
             Files.deleteIfExists(path);
             Files.createFile(path);
             Files.writeString(path, gradleOutput);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            System.err.println("Could not create the build log history file!");
+            e.printStackTrace();
         }
 
     }
-
 
     public static void main(String[] args) {
         TestChecker testChecker = new TestChecker(new DummyAPIClient());

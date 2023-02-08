@@ -18,7 +18,7 @@ public class JSONCommitWrapper implements CommitWrapper {
      */
     @Override
     public String getCommitSHA() {
-        return (String) commitMap.get("sha");
+        return (String) commitMap.get("id");
     }
 
     /**
@@ -26,7 +26,7 @@ public class JSONCommitWrapper implements CommitWrapper {
      */
     @Override
     public String getCommitMessage() {
-        return (String) ((Map<String, Object>) commitMap.get("commit")).get("message");
+        return (String) commitMap.get("message");
     }
 
     /**
@@ -34,7 +34,7 @@ public class JSONCommitWrapper implements CommitWrapper {
      */
     @Override
     public String getCommitAuthor() {
-        return (String) ((Map<String, Object>) commitMap.get("commit")).get("author");
+        return (String) ((Map<String, Object>) commitMap.get("author")).get("name");
     }
 
     /**
@@ -42,9 +42,6 @@ public class JSONCommitWrapper implements CommitWrapper {
      */
     @Override
     public String getCommitAuthorEmail() {
-        return (String) ((Map<String, Object>) commitMap.get("commit")).get("author_email");
+        return (String) ((Map<String, Object>) commitMap.get("author")).get("email");
     }
-
-
-
 }
