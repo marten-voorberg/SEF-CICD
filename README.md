@@ -2,7 +2,7 @@
 ## Contributions
 ### Karlis: 
 ### Marten:
-### David: 
+### David: Fixed the commit status API, essence document, general documentation, and code review
 ### Chenyi:
 ### Nils: 
 
