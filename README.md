@@ -2,9 +2,15 @@
 ## Contributions
 ### Karlis: 
 ### Marten:
-### David: Fixed the commit status API, essence document, general documentation, and code review
+### David: 
+# Fixed the commit status API
+# Wrote Essence document
+# General documentation
+# Code review
 ### Chenyi:
 ### Nils: 
+# Implemented history for CI builds
+# Code review
 
 
 ## Git Conventions
