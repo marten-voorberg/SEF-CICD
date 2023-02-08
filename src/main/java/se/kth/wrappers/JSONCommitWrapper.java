@@ -44,4 +44,7 @@ public class JSONCommitWrapper implements CommitWrapper {
     public String getCommitAuthorEmail() {
         return (String) ((Map<String, Object>) commitMap.get("author")).get("email");
     }
+    public String getCommitDate() {
+        return null;
+    }
 }

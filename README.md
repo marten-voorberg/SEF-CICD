@@ -22,5 +22,6 @@ To work with the email notifications, store the email password in secrets/email_
 - All changes to the main branch should be done through pull requests.
 - All pull requests must be merged into the main branch using the merge & squash method.
 
-
-
+## History
+History of previous commits (recorded when the software was running) can be found at
+[localhost:8080/commits/](http://localhost:8080/commits/) (localhost).

@@ -1,5 +1,13 @@
 package se.kth.pipelines;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import se.kth.github.DummyAPIClient;
 import se.kth.github.GithubApiClient;
 import se.kth.github.StatusState;
@@ -45,6 +53,7 @@ public class TestChecker extends PipelineHandler {
     @Override
     public void handleCommit(CommitWrapper commitWrapper) {
         final String commitSHA = commitWrapper.getCommitSHA();
+        
 
         this.apiClient.createOrUpdateCommitStatus(
                 commitSHA,
@@ -63,6 +72,7 @@ public class TestChecker extends PipelineHandler {
             p = runtime.exec(getCloneCommand());
             exitValue = p.waitFor();
             if (exitValue != 0) {
+                this.logBuild(commitWrapper, StatusState.ERROR, "", "2302011200");
                 this.apiClient.createOrUpdateCommitStatus(
                         commitSHA,
                         StatusState.ERROR,
@@ -77,6 +87,7 @@ public class TestChecker extends PipelineHandler {
             p = runtime.exec(getCheckoutCommitCommand(commitSHA));
             exitValue = p.waitFor();
             if (exitValue != 0) {
+                this.logBuild(commitWrapper, StatusState.ERROR, "", "2302011200");
                 this.apiClient.createOrUpdateCommitStatus(
                         commitSHA,
                         StatusState.ERROR,
@@ -88,10 +99,11 @@ public class TestChecker extends PipelineHandler {
             }
 
             p = runtime.exec(getGradleCommand());
-            String gradleOutput = new BufferedReader(new InputStreamReader(p.getInputStream())).lines().collect(Collectors.joining("\n"));
-            this.writeToFile(commitSHA, gradleOutput);
             exitValue = p.waitFor();
+            String gradleOutput = new BufferedReader(new InputStreamReader(p.getInputStream())).lines().collect(Collectors.joining(" <br> "));
+
             if (exitValue == 0) {
+                this.logBuild(commitWrapper, StatusState.SUCCESS, gradleOutput, "2302011200");
                 this.apiClient.createOrUpdateCommitStatus(
                         commitSHA,
                         StatusState.SUCCESS,
@@ -100,6 +112,7 @@ public class TestChecker extends PipelineHandler {
                         CONTEXT_STRING
                 );
             } else {
+                this.logBuild(commitWrapper, StatusState.FAILURE, gradleOutput, "2302011200");
                 this.apiClient.createOrUpdateCommitStatus(
                         commitSHA,
                         StatusState.FAILURE,
@@ -110,6 +123,7 @@ public class TestChecker extends PipelineHandler {
             }
 
         } catch (IOException | InterruptedException e) {
+            this.logBuild(commitWrapper, StatusState.ERROR, "", "2302011200");
             this.apiClient.createOrUpdateCommitStatus(
                     commitSHA,
                     StatusState.ERROR,
@@ -134,29 +148,20 @@ public class TestChecker extends PipelineHandler {
 
     }
 
-    private void writeToFile(String commitSHA, String gradleOutput) {
+    private void logBuild(CommitWrapper commitWrapper, StatusState status, String gradleOutput, String buildDate) {
         try {
-            Files.createDirectories(Path.of("history/tests"));
-//            Path historyPath = Path.of("history");
-//            if (!Files.exists(historyPath)) {
-//                Files.createDirectory(historyPath);
-//            }
-//
-//            Path testsPath = Path.of("history/tests");
-//            if (!Files.exists(testsPath)) {
-//                Files.createDirectory(testsPath);
-//            }
-
-            Path path = Path.of(String.format("history/tests/commit-%s", commitSHA));
+            Path path = Path.of(String.format("history/tests/%s", commitWrapper.getCommitSHA()));
+            Stream<String> linesStream = Files.lines(Path.of("history/buildTemplate"));
+            String template = linesStream.collect(Collectors.joining(""));
             Files.deleteIfExists(path);
             Files.createFile(path);
-            Files.writeString(path, gradleOutput);
+            Files.writeString(path, String.format(template, commitWrapper.getCommitSHA(), commitWrapper.getCommitDate(), commitWrapper.getCommitMessage(), commitWrapper.getCommitAuthor(), buildDate, status, gradleOutput));
         } catch (IOException e) {
-            System.err.println("Could not create the build log history file!");
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
 
     }
+
 
     public static void main(String[] args) {
         TestChecker testChecker = new TestChecker(new DummyAPIClient());
@@ -175,7 +180,7 @@ public class TestChecker extends PipelineHandler {
 
     private static String[] getGradleCommand() {
         // Todo: make the gradle path non-fixed
-        return toCommandArray("cd SEF-CICD; /opt/gradle/gradle-7.6/bin/gradle -i test");
+        return toCommandArray("gradle -b ~/Workspace/DD2480/SEF-CICD/build.gradle -i test");
     }
 
     private static String[] getCleanupCommand() {

@@ -32,4 +32,11 @@ public class DummyCommitWrapper implements CommitWrapper {
     public String getCommitAuthorEmail() {
         return commitAuthorEmail;
     }
+
+    @Override
+    public String getCommitDate(){
+        return "2302011200";
+    }
+
+
 }
