@@ -146,7 +146,6 @@ public class TestChecker extends PipelineHandler {
 
     }
 
-
     public static void main(String[] args) {
         TestChecker testChecker = new TestChecker(new DummyAPIClient());
         CommitWrapper commitWrapper = new DummyCommitWrapper("6c369c1af19c54af4485d475debefc1bd69da740", "whatever", "", "");
