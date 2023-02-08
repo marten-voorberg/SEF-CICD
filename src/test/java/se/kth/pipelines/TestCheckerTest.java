@@ -2,13 +2,12 @@ package se.kth.pipelines;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import se.kth.github.GithubApiClient;
 import se.kth.github.StatusState;
 import se.kth.utils.StoringApiClient;
 import se.kth.wrappers.CommitWrapper;
 import se.kth.wrappers.DummyCommitWrapper;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TestCheckerTest {
     private final CommitWrapper COMMIT_WITH_PASSING_TESTS = new DummyCommitWrapper("948fa5bd433caed2f2ff81a3975aeaadc97678ae", "", "", "");

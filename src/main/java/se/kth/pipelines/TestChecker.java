@@ -89,7 +89,7 @@ public class TestChecker extends PipelineHandler {
 
             p = runtime.exec(getGradleCommand());
             String gradleOutput = new BufferedReader(new InputStreamReader(p.getInputStream())).lines().collect(Collectors.joining("\n"));
-            this.writeToFile(commitSHA, gradleOutput);
+//            this.writeToFile(commitSHA, gradleOutput);
             exitValue = p.waitFor();
             if (exitValue == 0) {
                 this.apiClient.createOrUpdateCommitStatus(
@@ -137,16 +137,6 @@ public class TestChecker extends PipelineHandler {
     private void writeToFile(String commitSHA, String gradleOutput) {
         try {
             Files.createDirectories(Path.of("history/tests"));
-//            Path historyPath = Path.of("history");
-//            if (!Files.exists(historyPath)) {
-//                Files.createDirectory(historyPath);
-//            }
-//
-//            Path testsPath = Path.of("history/tests");
-//            if (!Files.exists(testsPath)) {
-//                Files.createDirectory(testsPath);
-//            }
-
             Path path = Path.of(String.format("history/tests/commit-%s", commitSHA));
             Files.deleteIfExists(path);
             Files.createFile(path);
