@@ -47,7 +47,6 @@ public class ContinuousIntegrationServer extends AbstractHandler {
         System.out.printf("Received request to target '%s'\n", target);
 
         try {
-
             if (target.contains("commit-message")) {
                 PushWrapper pushWrapper = new JSONPushWrapper(request);
                 pushWrapper.getCommitWrappers().forEach(commitMessageChecker::handleCommit);

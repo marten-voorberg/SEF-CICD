@@ -89,7 +89,7 @@ public class TestChecker extends PipelineHandler {
 
             p = runtime.exec(getGradleCommand());
             String gradleOutput = new BufferedReader(new InputStreamReader(p.getInputStream())).lines().collect(Collectors.joining("\n"));
-            this.writeToFile(commitSHA, gradleOutput);
+//            this.writeToFile(commitSHA, gradleOutput);
             exitValue = p.waitFor();
             if (exitValue == 0) {
                 this.apiClient.createOrUpdateCommitStatus(
