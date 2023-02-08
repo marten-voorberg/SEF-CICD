@@ -17,6 +17,8 @@ dependencies {
     implementation 'com.sun.mail:javax.mail:1.6.0'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+    implementation 'com.google.code.gson:gson:2.10.1'
+    implementation group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.3.4'
 }
 
 test {

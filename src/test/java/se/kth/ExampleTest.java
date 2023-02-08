@@ -4,8 +4,7 @@ import org.junit.jupiter.api.Test;
 import se.kth.email.EmailClient;
 import se.kth.github.StatusState;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ExampleTest {
     @Test
