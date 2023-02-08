@@ -1,4 +1,14 @@
 # DD2480 Assignment 2
+## Contributions
+Karlis: Wrote the wrappers and their tests.
+
+Marten: Wrote the HTTP request handling and the CI pipeline to build and test the project through Gradle. 
+
+David: Wrote the HTTP client to send request to the GitHub status API, wrote the essence document, wrote documentation, and did some code reviewing.
+
+Chenyi: Wrote the code to notify of CI results through email.
+
+Nils: Wrote the code to store and display a history of CI results.
 
 
 ## Project Description
@@ -37,3 +47,4 @@ The server should run on a linux distro and was tested extensively on Fedora.
 To send API requests to the GitHub status API, you should add an api key to `/secrets/github_token`. 
 The main method is contained in `ContiniousIntegrationServer`. This launches the server on port 8080.
 You should either run this CI server on a machine with a fixed IP address or tunnel to this IP address using ngrok.
+
