@@ -170,7 +170,7 @@ public class TestChecker extends PipelineHandler {
 
     private static String[] getGradleCommand() {
         // Todo: make the gradle path non-fixed
-        return toCommandArray("cd SEF-CICD; /opt/gradle/gradl-7.6/bin/gradle -i test");
+        return toCommandArray("cd SEF-CICD; /opt/gradle/gradle-7.6/bin/gradle -i test");
     }
 
     private static String[] getCleanupCommand() {
