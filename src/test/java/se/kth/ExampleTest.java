@@ -9,6 +9,6 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ExampleTest {
     @Test
     public void testTrivialThing() {
-        assertEquals(5, 3 + 2);
+        assertEquals(5, 4 + 2);
     }
 }
