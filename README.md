@@ -1,17 +1,14 @@
 # DD2480 Assignment 2
 ## Contributions
-### Karlis: 
-### Marten:
-### David: 
-# Fixed the commit status API
-# Wrote Essence document
-# General documentation
-# Code review
-### Chenyi:
-### Nils: 
-# Implemented history for CI builds
-# Code review
+Karlis: Wrote the wrappers and their tests.
 
+Marten: Wrote the HTTP request handling and the CI pipeline to build and test the project through Gradle. 
+
+David: Wrote the HTTP client to send request to the GitHub status API, wrote the essence document, wrote documentation, and did some code reviewing.
+
+Chenyi: Wrote the code to notify of CI results through email.
+
+Nils: Wrote the code to store and display a history of CI results.
 
 ## Git Conventions
 - All commit messages take the following structure:
