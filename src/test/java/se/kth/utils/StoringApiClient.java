@@ -23,11 +23,6 @@ public class StoringApiClient implements GithubApiClient {
         this.storedCalls.add(new APICall(commitSHA, state, targetUrl, description, context));
     }
 
-    @Override
-    public CloseableHttpResponse postStatus(StatusState state) throws IOException {
-        return null;
-    }
-
     public List<APICall> getStoredCalls() {
         return this.storedCalls;
     }

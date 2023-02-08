@@ -12,9 +12,4 @@ public class DummyAPIClient implements GithubApiClient {
         System.out.printf("\tstate: '%s'\n", state);
         System.out.printf("\tdescription: '%s\n'", description);
     }
-
-    @Override
-    public CloseableHttpResponse postStatus(StatusState state) throws IOException {
-        return null;
-    }
 }

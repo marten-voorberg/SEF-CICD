@@ -1,7 +1,6 @@
 package se.kth.github;
 
 import com.google.gson.*;
-import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -11,11 +10,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public class CommitStatus implements GithubApiClient {
-
+public class HttpAPIClient implements GithubApiClient {
     private final String owner;
     private final String repo;
-    private final String sha;
     private final String url;
     private final String token;
 
@@ -24,16 +21,14 @@ public class CommitStatus implements GithubApiClient {
      * Constructor for a commit status
      *
      * @param owner The owner of the repo
-     * @param repo The name of the repo
-     * @param sha The commit id
+     * @param repo  The name of the repo
      */
-    public CommitStatus(String owner, String repo, String sha) {
+    public HttpAPIClient(String owner, String repo) {
         this.owner = owner;
         this.repo = repo;
-        this.sha = sha;
-        this.url = "https://api.github.com/repos/" + owner + "/" + repo + "/statuses/" + sha;
+        this.url = "https://api.github.com/repos/%s/%s/statuses/".formatted(owner, repo);
 
-        try{
+        try {
             this.token = Files.readString(Path.of("secrets/github_token"));
         } catch (IOException e) {
             System.err.println("No token file was found! Make sure you have a /secrets/github_token file");
@@ -43,43 +38,31 @@ public class CommitStatus implements GithubApiClient {
 
     @Override
     public void createOrUpdateCommitStatus(String commitSHA, StatusState state, String targetUrl, String description, String context) {
-
-    }
-    /**
-     * Creates a POST request with the Github Access Token as header.
-     *
-     * @param state the status one wants to update or create for the commit
-     */
-    @Override
-    public CloseableHttpResponse postStatus(StatusState state) throws IOException {
-
         JsonObject jo = new JsonObject(); // create json object
 
-        switch (state) { //add the appropriate state as a property
-            case SUCCESS -> jo.addProperty("state", "success");
-
-            case ERROR -> jo.addProperty("state", "error");
-
-            case PENDING -> jo.addProperty("state", "pending");
-
-            case FAILURE -> jo.addProperty("state", "failure");
-        }
+        jo.addProperty("state", state.getApiRepresentation());
+        jo.addProperty("target_url", targetUrl);
+        jo.addProperty("description", description);
+        jo.addProperty("context", context);
 
         try (final CloseableHttpClient httpClient = HttpClients.createDefault()) { //create http client and add headers
-            HttpPost hp = new HttpPost(url);
+            HttpPost hp = new HttpPost(url + commitSHA);
 
             hp.addHeader("Accept", "application/vnd.github+json");
-            hp.addHeader("Authorization", "Bearer " + token);
-            hp.addHeader("X-GitHub-Api-Version","2022-11-28");
+            hp.addHeader("Authorization", "Bearer %s".formatted(token));
+            hp.addHeader("X-GitHub-Api-Version", "2022-11-28");
 
             StringEntity se = new StringEntity(jo.toString());
 
             hp.setEntity(se);
-            CloseableHttpResponse res = httpClient.execute(hp);
-
-            return res;
+            httpClient.execute(hp);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
-
+    public static void main(String[] args) {
+        var client = new HttpAPIClient("marten-voorberg", "SEF-CICD");
+        client.createOrUpdateCommitStatus("948fa5bd433caed2f2ff81a3975aeaadc97678ae", StatusState.SUCCESS, null, "Set through java", "TEMP");
+    }
 }
