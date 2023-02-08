@@ -4,6 +4,13 @@
 ## Project Description
 This is a small CI server dedicated for Github. The server supports the building and testing of Gradle projects.
 
+## Keys and Configurations
+In order to correctly interact with Github's commit status API, you should keep your github token as a single string in a text file located in secrets/github_token.
+
+To work with the email notifications, store the email password in secrets/email_password.
+
+
+
 ## Git Conventions
 - All commit messages take the following structure:
 `<commit type> #<issue-number>: <description>`
@@ -18,6 +25,10 @@ This is a small CI server dedicated for Github. The server supports the building
   - The `description` should briefly describe the changes made by the commit
 - All changes to the main branch should be done through pull requests.
 - All pull requests must be merged into the main branch using the merge & squash method.
+
+## History
+History of previous commits (recorded when the software was running) can be found at
+[localhost:8080/commits/](http://localhost:8080/commits/) (localhost).
 
 ## Build and Run Instructions
 The project can be build and tested through Gradle by running `gradle build` and `gradle test` respectively.
