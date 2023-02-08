@@ -17,6 +17,7 @@
 </div>
 <div>
     <h2>Build Information</h2>
+    <h4>%s</h4>
 </div>
 <div style="background-color:#DFDFDF">
     <h4>Build Test Result</h4>
