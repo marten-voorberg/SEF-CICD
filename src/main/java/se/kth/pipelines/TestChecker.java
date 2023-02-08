@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -156,7 +157,7 @@ public class TestChecker extends PipelineHandler {
                             commitWrapper.getCommitDateTimeString(),
                             commitWrapper.getCommitMessage(),
                             commitWrapper.getCommitAuthor(),
-                            DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm").format(Instant.now()),
+                            DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm").withZone(ZoneId.systemDefault()).format(Instant.now()),
                             status,
                             gradleOutput
                     )
