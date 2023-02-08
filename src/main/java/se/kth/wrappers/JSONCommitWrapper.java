@@ -47,7 +47,4 @@ public class JSONCommitWrapper implements CommitWrapper {
     public String getCommitDate() {
         return null;
     }
-    public String getCommitAuthor() {
-        return null;
-    }
 }
