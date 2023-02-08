@@ -17,11 +17,4 @@ public class ExampleTest {
     public void testThatFails() {
         assertTrue(false);
     }
-
-    // @Test
-    public void testSendEmail(){
-        var apiClient = new EmailClient();
-        apiClient.sendResultEmail("whale0827@icloud.com", StatusState.SUCCESS, "Commit check passed");
-        assertTrue(true);
-    }
 }

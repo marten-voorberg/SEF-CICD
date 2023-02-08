@@ -12,6 +12,7 @@ import java.util.Properties;
 
 public class EmailClient {
     private final String password;
+
     public EmailClient() {
         try {
             this.password = Files.readString(Path.of("secrets/email_password"));
@@ -61,10 +62,8 @@ public class EmailClient {
             message.setSubject("Commit Status changed to: " + state.toString());
             // Now set the actual message
             message.setText(description);
-            System.out.println("sending...");
             // Send message
             Transport.send(message);
-            System.out.println("Sent message successfully....");
         } catch (MessagingException mex) {
             mex.printStackTrace();
         }
