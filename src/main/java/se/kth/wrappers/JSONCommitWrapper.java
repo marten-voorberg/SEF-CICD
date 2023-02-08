@@ -6,6 +6,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 
+/**
+ *
+ */
 public class JSONCommitWrapper implements CommitWrapper {
     private final Map<String, Object> commitMap;
     private final static DateTimeFormatter DATE_TIME_FORMATTER =
