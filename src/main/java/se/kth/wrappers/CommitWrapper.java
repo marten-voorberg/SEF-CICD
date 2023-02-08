@@ -5,4 +5,5 @@ public interface CommitWrapper {
     String getCommitMessage();
     String getCommitDate();
     String getCommitAuthor();
+    String getCommitAuthorEmail();
 }

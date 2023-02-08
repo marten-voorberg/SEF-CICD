@@ -1,5 +1,12 @@
 # DD2480 Assignment 2
 
+## Keys and Configurations
+In order to correctly interact with Github's commit status API, you should keep your github token as a single string in a text file located in secrets/github_token.
+
+To work with the email notifications, store the email password in secrets/email_password.
+
+
+
 ## Git Conventions
 - All commit messages take the following structure:
 `<commit type> #<issue-number>: <description>`

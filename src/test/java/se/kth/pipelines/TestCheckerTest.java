@@ -11,8 +11,8 @@ import se.kth.wrappers.DummyCommitWrapper;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TestCheckerTest {
-    private final CommitWrapper COMMIT_WITH_PASSING_TESTS = new DummyCommitWrapper("948fa5bd433caed2f2ff81a3975aeaadc97678ae", "");
-    private final CommitWrapper COMMIT_WITH_FAILING_TESTS = new DummyCommitWrapper("5a37324c4056c6a07ed68b2824c7c0219e5bd0bd", "");
+    private final CommitWrapper COMMIT_WITH_PASSING_TESTS = new DummyCommitWrapper("948fa5bd433caed2f2ff81a3975aeaadc97678ae", "", "", "");
+    private final CommitWrapper COMMIT_WITH_FAILING_TESTS = new DummyCommitWrapper("5a37324c4056c6a07ed68b2824c7c0219e5bd0bd", "", "", "");
 
     private StoringApiClient storingApiClient;
     private TestChecker testChecker;

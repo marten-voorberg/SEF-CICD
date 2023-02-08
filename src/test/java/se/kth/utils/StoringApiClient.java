@@ -1,8 +1,10 @@
 package se.kth.utils;
 
+import org.apache.http.client.methods.CloseableHttpResponse;
 import se.kth.github.GithubApiClient;
 import se.kth.github.StatusState;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 

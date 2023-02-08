@@ -1,5 +1,9 @@
 package se.kth.github;
 
+import org.apache.http.client.methods.CloseableHttpResponse;
+
+import java.io.IOException;
+
 public class DummyAPIClient implements GithubApiClient {
     @Override
     public void createOrUpdateCommitStatus(String commitSHA, StatusState state, String targetUrl, String description, String context) {
@@ -8,4 +12,6 @@ public class DummyAPIClient implements GithubApiClient {
         System.out.printf("\tstate: '%s'\n", state);
         System.out.printf("\tdescription: '%s\n'", description);
     }
+
+
 }

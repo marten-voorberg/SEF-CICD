@@ -5,8 +5,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.AbstractHandler;
-import se.kth.github.DummyAPIClient;
 import se.kth.github.GithubApiClient;
+import se.kth.github.HttpAPIClient;
 import se.kth.pipelines.CommitMessageChecker;
 import se.kth.pipelines.TestChecker;
 import se.kth.wrappers.JSONPushWrapper;
@@ -27,7 +27,7 @@ public class ContinuousIntegrationServer extends AbstractHandler {
     private final TestChecker testChecker;
 
     public ContinuousIntegrationServer() {
-        githubApiClient = new DummyAPIClient();
+        githubApiClient = new HttpAPIClient("marten-voorberg", "SEF-CICD");
 
         commitMessageChecker = new CommitMessageChecker(this.githubApiClient);
         this.testChecker = new TestChecker(this.githubApiClient);
@@ -49,7 +49,6 @@ public class ContinuousIntegrationServer extends AbstractHandler {
         System.out.printf("Received request to target '%s'\n", target);
 
         try {
-
             if (target.contains("commit-message")) {
                 PushWrapper pushWrapper = new JSONPushWrapper(request);
                 pushWrapper.getCommitWrappers().forEach(commitMessageChecker::handleCommit);
