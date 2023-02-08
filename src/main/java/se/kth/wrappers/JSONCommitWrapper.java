@@ -1,10 +1,15 @@
 package se.kth.wrappers;
 
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 
 public class JSONCommitWrapper implements CommitWrapper {
     private final Map<String, Object> commitMap;
+    private final static DateTimeFormatter DATE_TIME_FORMATTER =
+            DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm").withZone(ZoneId.systemDefault());
 
     /**
      * @param commitMap a map of the commit object from the GitHub API
@@ -44,7 +49,9 @@ public class JSONCommitWrapper implements CommitWrapper {
     public String getCommitAuthorEmail() {
         return (String) ((Map<String, Object>) commitMap.get("author")).get("email");
     }
-    public String getCommitDate() {
-        return null;
+
+    public String getCommitDateTimeString() {
+        Instant dateTime = Instant.from(DateTimeFormatter.ISO_DATE_TIME.parse((String) commitMap.get("timestamp")));
+        return DATE_TIME_FORMATTER.format(dateTime);
     }
 }

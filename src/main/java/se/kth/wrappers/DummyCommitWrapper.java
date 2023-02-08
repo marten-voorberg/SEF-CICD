@@ -34,7 +34,7 @@ public class DummyCommitWrapper implements CommitWrapper {
     }
 
     @Override
-    public String getCommitDate(){
+    public String getCommitDateTimeString(){
         return "2302011200";
     }
 
