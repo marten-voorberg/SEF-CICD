@@ -5,6 +5,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -41,12 +44,13 @@ public class TestChecker extends PipelineHandler {
      * </ol>
      * The results of the pipeline are sent to GitHub through a {@link GithubApiClient} and the gradle build and test log
      * are stored in <code>history/tests/commit-'commit-id'</code>.
+     *
      * @param commitWrapper A wrapper containing all relevant information about the commit to be put through the pipeline.
      */
     @Override
     public void handleCommit(CommitWrapper commitWrapper) {
         final String commitSHA = commitWrapper.getCommitSHA();
-        
+
 
         this.apiClient.createOrUpdateCommitStatus(
                 commitSHA,
@@ -145,7 +149,19 @@ public class TestChecker extends PipelineHandler {
             String template = linesStream.collect(Collectors.joining(""));
             Files.deleteIfExists(path);
             Files.createFile(path);
-            Files.writeString(path, String.format(template, commitWrapper.getCommitSHA(), commitWrapper.getCommitDateTimeString(), commitWrapper.getCommitMessage(), commitWrapper.getCommitAuthor(), status, gradleOutput));
+            Files.writeString(
+                    path,
+                    String.format(
+                            template,
+                            commitWrapper.getCommitSHA(),
+                            commitWrapper.getCommitDateTimeString(),
+                            commitWrapper.getCommitMessage(),
+                            commitWrapper.getCommitAuthor(),
+                            DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm").withZone(ZoneId.systemDefault()).format(Instant.now()),
+                            status,
+                            gradleOutput
+                    )
+            );
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
