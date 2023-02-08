@@ -14,13 +14,6 @@ import se.kth.github.StatusState;
 import se.kth.wrappers.CommitWrapper;
 import se.kth.wrappers.DummyCommitWrapper;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.stream.Collectors;
-
 /**
  * Pipeline that builds and tests the state of the repository after a specific commit through gradle.
  * The results are send are set as a GitHub status and the build and test logs are stored locally as a file.
@@ -72,7 +65,6 @@ public class TestChecker extends PipelineHandler {
             p = runtime.exec(getCloneCommand());
             exitValue = p.waitFor();
             if (exitValue != 0) {
-                this.logBuild(commitWrapper, StatusState.ERROR, "", "2302011200");
                 this.apiClient.createOrUpdateCommitStatus(
                         commitSHA,
                         StatusState.ERROR,
@@ -87,7 +79,6 @@ public class TestChecker extends PipelineHandler {
             p = runtime.exec(getCheckoutCommitCommand(commitSHA));
             exitValue = p.waitFor();
             if (exitValue != 0) {
-                this.logBuild(commitWrapper, StatusState.ERROR, "", "2302011200");
                 this.apiClient.createOrUpdateCommitStatus(
                         commitSHA,
                         StatusState.ERROR,
@@ -103,7 +94,7 @@ public class TestChecker extends PipelineHandler {
             String gradleOutput = new BufferedReader(new InputStreamReader(p.getInputStream())).lines().collect(Collectors.joining(" <br> "));
 
             if (exitValue == 0) {
-                this.logBuild(commitWrapper, StatusState.SUCCESS, gradleOutput, "2302011200");
+                this.logBuild(commitWrapper, StatusState.SUCCESS, gradleOutput);
                 this.apiClient.createOrUpdateCommitStatus(
                         commitSHA,
                         StatusState.SUCCESS,
@@ -112,7 +103,7 @@ public class TestChecker extends PipelineHandler {
                         CONTEXT_STRING
                 );
             } else {
-                this.logBuild(commitWrapper, StatusState.FAILURE, gradleOutput, "2302011200");
+                this.logBuild(commitWrapper, StatusState.FAILURE, gradleOutput);
                 this.apiClient.createOrUpdateCommitStatus(
                         commitSHA,
                         StatusState.FAILURE,
@@ -123,7 +114,6 @@ public class TestChecker extends PipelineHandler {
             }
 
         } catch (IOException | InterruptedException e) {
-            this.logBuild(commitWrapper, StatusState.ERROR, "", "2302011200");
             this.apiClient.createOrUpdateCommitStatus(
                     commitSHA,
                     StatusState.ERROR,
@@ -148,14 +138,14 @@ public class TestChecker extends PipelineHandler {
 
     }
 
-    private void logBuild(CommitWrapper commitWrapper, StatusState status, String gradleOutput, String buildDate) {
+    private void logBuild(CommitWrapper commitWrapper, StatusState status, String gradleOutput) {
         try {
             Path path = Path.of(String.format("history/tests/%s", commitWrapper.getCommitSHA()));
             Stream<String> linesStream = Files.lines(Path.of("history/buildTemplate"));
             String template = linesStream.collect(Collectors.joining(""));
             Files.deleteIfExists(path);
             Files.createFile(path);
-            Files.writeString(path, String.format(template, commitWrapper.getCommitSHA(), commitWrapper.getCommitDate(), commitWrapper.getCommitMessage(), commitWrapper.getCommitAuthor(), buildDate, status, gradleOutput));
+            Files.writeString(path, String.format(template, commitWrapper.getCommitSHA(), commitWrapper.getCommitDateTimeString(), commitWrapper.getCommitMessage(), commitWrapper.getCommitAuthor(), status, gradleOutput));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
