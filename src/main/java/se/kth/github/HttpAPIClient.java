@@ -10,18 +10,21 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+/**
+ * Concrete implementation of {@link GithubApiClient} that actually sends HTTP Requests.
+ */
 public class HttpAPIClient implements GithubApiClient {
     private final String owner;
     private final String repo;
     private final String url;
     private final String token;
 
-
     /**
-     * Constructor for a commit status
+     * Create a new HTTP client.
+     * Creating an HttpAPIClient will also read your GitHub API token so this should be stored in <code>/secrets/github_token</code>.
      *
-     * @param owner The owner of the repo
-     * @param repo  The name of the repo
+     * @param owner The username of the repository owner
+     * @param repo  The name of the repository
      */
     public HttpAPIClient(String owner, String repo) {
         this.owner = owner;
@@ -36,6 +39,15 @@ public class HttpAPIClient implements GithubApiClient {
         }
     }
 
+    /**
+     * Update the commit status over the GitHub Status REST API.
+     * @param commitSHA The ID of the commit to be updated.
+     * @param state The state of the commit. For more: {@link StatusState}
+     * @param targetUrl The url to which status will link. Can be null.
+     * @param description The description of the commit status.
+     * @param context The context of the status. Sending statuses to the same commit twice with the same context allows
+     *                you to override your previous status.
+     */
     @Override
     public void createOrUpdateCommitStatus(String commitSHA, StatusState state, String targetUrl, String description, String context) {
         JsonObject jo = new JsonObject(); // create json object
