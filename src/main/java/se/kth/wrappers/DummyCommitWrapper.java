@@ -1,5 +1,8 @@
 package se.kth.wrappers;
 
+/*
+* Dummy Commit Wrapper for tesing and development purposes
+*/
 public class DummyCommitWrapper implements CommitWrapper {
     private final String commitSHA;
     private final String commitMessage;

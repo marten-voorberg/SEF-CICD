@@ -10,6 +10,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+ /**
+ * Push Wrapper with JSON as input
+ * @param HTTpServetRequest a http servet request in the form of a JSON doc
+ */
 public class JSONPushWrapper implements PushWrapper {
     private final Map<String, Object> pushMap;
     private final List<CommitWrapper> commitWrappers;
@@ -31,9 +35,6 @@ public class JSONPushWrapper implements PushWrapper {
 
     }
 
-    /**
-     * @return the list of commit wrappers
-     */
     @Override
     public List<CommitWrapper> getCommitWrappers() {
         return this.commitWrappers;
