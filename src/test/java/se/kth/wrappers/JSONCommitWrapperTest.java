@@ -16,7 +16,7 @@ class JSONCommitWrapperTest {
         Map<String, Object> commitMap = new HashMap<>();
         commitMap.put("id", "abc123");
         JSONCommitWrapper wrapper = new JSONCommitWrapper(commitMap);
-        assertEquals("abc123", wrapper.getCommitSHA());
+        assertEquals("abc456123", wrapper.getCommitSHA());
     }
 
     //Test whether we can get the commit message method
